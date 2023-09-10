@@ -42,6 +42,38 @@ app.get('/api', async (req, res) => {
   }
 });
 
+app.post('/api/addgame', async (req, res) => {
+  try {
+    const {
+      id,
+      opponent,
+      gameDay,
+      venue,
+      time,
+      teamScore,
+      oppScore,
+      gameStatus,
+    } = req.body;
+    const newGame = new Game({
+      id: id,
+      opponent: opponent,
+      gameDay: gameDay,
+      venue: venue,
+      time: time,
+      teamScore: teamScore,
+      oppScore: oppScore,
+      gameStatus: gameStatus,
+    });
+
+    const gameSavedId = newGame.id;
+    console.log('Game added to Webiste ', gameSavedId);
+    res.status(201).json({ message: 'Game added successfully:' });
+  } catch (error) {
+    console.error('Error adding game to Database: ', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

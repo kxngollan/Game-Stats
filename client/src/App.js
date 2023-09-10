@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import UserInput from './components/UserInputs/UserInput';
 
@@ -6,6 +6,7 @@ function App() {
   const [games, setGames] = useState([]);
   const [error, setError] = useState(null);
 
+  // Fetch Game Data
   const FetchGameData = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:8000/api');
@@ -35,7 +36,32 @@ function App() {
     }
   });
 
-  const onGameSubmission = (game) => {};
+  useEffect(() => {
+    FetchGameData;
+  }, [FetchGameData]);
+
+  //Add Game Submission
+  const onGameSubmission = async (game) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/addgame', {
+        method: 'POST',
+        body: JSON.stringify(task),
+        headers: {
+          'content-type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+
+      await response.json();
+      FetchGameData();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   return (
     <div className="App">
