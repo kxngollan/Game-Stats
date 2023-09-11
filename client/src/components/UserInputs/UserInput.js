@@ -1,6 +1,7 @@
-import GameDetails from './GameDetails.Js';
+import GameDetails from './GameDetails.js';
 
 const UserInput = (props) => {
-  return <GameDetails onAddGame />;
+  return <GameDetails onAddGame={props.onAddGame} />;
 };
+
 export default UserInput;

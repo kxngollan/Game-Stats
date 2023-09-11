@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import UserInput from './components/UserInputs/UserInput';
+import ListResult from './components/GameData/ListResult';
 
 function App() {
   const [games, setGames] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch Game Data
   const FetchGameData = useCallback(async () => {
+    setError(null);
     try {
       const response = await fetch('http://localhost:8000/api');
       if (!response.ok) {
-        throw new Error('Something went wrong when recieving data');
+        throw new Error('Something went wrong when receiving data');
       }
       const data = await response.json();
 
@@ -26,26 +27,25 @@ function App() {
         gameStatus: data[key].gameStatus,
       }));
 
-      const sortedGames = [...teamGameDays].sort((game1, game2) => {
-        new Date(game1.date) - new Date(game2.date);
-      });
+      const sortedGames = [...teamGameDays].sort(
+        (game1, game2) => new Date(game1.date) - new Date(game2.date)
+      );
 
       setGames(sortedGames);
     } catch (error) {
       setError(error.message);
     }
-  });
+  }, []);
 
   useEffect(() => {
-    FetchGameData;
+    FetchGameData();
   }, [FetchGameData]);
 
-  //Add Game Submission
   const onGameSubmission = async (game) => {
     try {
       const response = await fetch('http://localhost:8000/api/addgame', {
         method: 'POST',
-        body: JSON.stringify(task),
+        body: JSON.stringify(game),
         headers: {
           'content-type': 'application/json',
         },
@@ -66,6 +66,8 @@ function App() {
   return (
     <div className="App">
       <UserInput onAddGameDay={onGameSubmission} />
+      {!error && <ListResult games={games} />}
+      {error && <h2>{error}</h2>}
     </div>
   );
 }

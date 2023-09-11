@@ -1,17 +1,17 @@
-import { Express } from 'express';
-import { CorsOptions } from 'cors';
+import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const MONGODB = process.env.MONGODBURL;
+const MONGODB = 'mongodb://localhost:27017';
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: '*',
+    origin: 'http://localhost:3000',
   })
 );
 
@@ -30,11 +30,11 @@ const gameSchema = new mongoose.Schema({
   status: String,
 });
 
-const game = mongoose.model('Game', gameSchema);
+const Game = mongoose.model('Game', gameSchema);
 
 app.get('/api', async (req, res) => {
   try {
-    const allGames = Game.find();
+    const allGames = await Game.find();
     res.json(allGames);
   } catch (error) {
     console.error('Error fetching game data!');
@@ -44,30 +44,22 @@ app.get('/api', async (req, res) => {
 
 app.post('/api/addgame', async (req, res) => {
   try {
-    const {
-      id,
-      opponent,
-      gameDay,
-      venue,
-      time,
-      teamScore,
-      oppScore,
-      gameStatus,
-    } = req.body;
+    const { id, opponent, date, location, teamScore, opponentScore, status } =
+      req.body;
     const newGame = new Game({
       id: id,
       opponent: opponent,
-      gameDay: gameDay,
-      venue: venue,
-      time: time,
+      date: date,
+      location: location,
       teamScore: teamScore,
-      oppScore: oppScore,
-      gameStatus: gameStatus,
+      opponentScore: opponentScore,
+      status: status,
     });
 
     const gameSavedId = newGame.id;
-    console.log('Game added to Webiste ', gameSavedId);
-    res.status(201).json({ message: 'Game added successfully:' });
+    await newGame.save();
+    console.log('Game added to Website ', gameSavedId);
+    res.status(201).json({ message: 'Game added successfully' });
   } catch (error) {
     console.error('Error adding game to Database: ', error);
     res.status(500).json({ error: 'Internal server error' });
