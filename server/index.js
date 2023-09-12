@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const MONGODB = 'mongodb://localhost:27017';
+const MONGODB = 'mongodb://localhost:27017/TeamSchedule';
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -21,13 +21,14 @@ mongoose.connect(MONGODB, {
 });
 
 const gameSchema = new mongoose.Schema({
-  opponent: String,
-  location: String,
-  date: String,
-  teamScore: Number,
-  opponentScore: Number,
   id: String,
-  status: String,
+  opponent: String,
+  gameDay: String,
+  venue: String,
+  time: String,
+  teamScore: String,
+  oppScore: String,
+  gameResult: String,
 });
 
 const Game = mongoose.model('Game', gameSchema);
@@ -44,16 +45,25 @@ app.get('/api', async (req, res) => {
 
 app.post('/api/addgame', async (req, res) => {
   try {
-    const { id, opponent, date, location, teamScore, opponentScore, status } =
-      req.body;
+    const {
+      id,
+      opponent,
+      gameDay,
+      venue,
+      teamScore,
+      oppScore,
+      gameResult,
+      time,
+    } = req.body;
     const newGame = new Game({
       id: id,
       opponent: opponent,
-      date: date,
-      location: location,
+      gameDay: gameDay,
+      venue: venue,
       teamScore: teamScore,
-      opponentScore: opponentScore,
-      status: status,
+      oppScore: oppScore,
+      gameResult: gameResult,
+      time: time,
     });
 
     const gameSavedId = newGame.id;

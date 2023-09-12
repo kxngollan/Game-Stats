@@ -24,7 +24,7 @@ function App() {
         time: data[key].time,
         teamScore: data[key].teamScore,
         oppScore: data[key].oppScore,
-        gameStatus: data[key].gameStatus,
+        gameResult: data[key].gameResult,
       }));
 
       const sortedGames = [...teamGameDays].sort(
@@ -58,6 +58,7 @@ function App() {
 
       await response.json();
       FetchGameData();
+      console.log(games);
     } catch (error) {
       setError(error.message);
     }

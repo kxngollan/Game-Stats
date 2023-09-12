@@ -5,12 +5,17 @@ const GameDetails = (props) => {
   const [gameDay, setGameDay] = useState('');
   const [venue, setVenue] = useState('');
   const [time, setTime] = useState('');
-  const [teamScore, setTeamScore] = useState('');
-  const [oppScore, setOppScore] = useState('');
+  const [teamScore, setTeamScore] = useState(0);
+  const [oppScore, setOppScore] = useState(0);
   const [gameResult, setGameResult] = useState('');
 
   const onGameDayChange = (event) => {
     setGameDay(event.target.value);
+  };
+
+  const onResultChange = (event) => {
+    console.log(event.target.value);
+    setGameResult(event.target.value);
   };
 
   const onOpponentChange = (event) => {
@@ -18,10 +23,12 @@ const GameDetails = (props) => {
   };
 
   const onVenueChange = (event) => {
+    console.log(event.target.value);
     setVenue(event.target.value);
   };
 
   const onTimeChange = (event) => {
+    console.log(event.target.value);
     setTime(event.target.value);
   };
 
@@ -37,6 +44,7 @@ const GameDetails = (props) => {
     event.preventDefault();
 
     const gameDayData = {
+      id: Math.random().toString(),
       opponent: opponent,
       gameDay: gameDay,
       venue: venue,
@@ -44,8 +52,17 @@ const GameDetails = (props) => {
       teamScore: teamScore,
       oppScore: oppScore,
       gameResult: gameResult,
-      id: Math.random().toString(),
     };
+
+    props.onAddGame(gameDayData);
+
+    setOpponent('');
+    setGameDay('');
+    setVenue('');
+    setTime('');
+    setTeamScore(0);
+    setOppScore(0);
+    setGameResult('');
   };
 
   return (
@@ -53,13 +70,23 @@ const GameDetails = (props) => {
       <label>Date</label>
       <input type="date" value={gameDay} onChange={onGameDayChange} />
       <br />
+      <label>Result</label>
+      <select value={gameResult} onChange={onResultChange}>
+        <option value="Scheduled">Scheduled</option>
+        <option value="Win">Win</option>
+        <option value="Lose">Lose</option>
+        <option value="Delayed">Delayed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+      <br />
       <label>Opponent</label>
       <input type="text" value={opponent} onChange={onOpponentChange} />
       <br />
       <label>Venue</label>
-      <select onChange={onVenueChange}>
-        <option value={venue}>Home</option>
-        <option value={venue}>Away</option>
+      <select value={venue} onChange={onVenueChange}>
+        <option value="Home">Home</option>
+        <option value="Away">Away</option>
+        <option value="Undetermined">Undetermined</option>
       </select>
       <br />
       <label>Time</label>
@@ -70,7 +97,7 @@ const GameDetails = (props) => {
         type="number"
         value={teamScore}
         min={0}
-        max={1000}
+        max={300}
         step={1}
         onChange={onTeamScoreChange}
       />
@@ -80,7 +107,7 @@ const GameDetails = (props) => {
         type="number"
         value={oppScore}
         min={0}
-        max={1000}
+        max={300}
         step={1}
         onChange={onOpponentScoreChange}
       />

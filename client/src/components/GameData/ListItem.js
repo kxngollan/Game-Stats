@@ -8,6 +8,7 @@ const ListItem = (props) => {
       <p>{props.teamScore}</p>
       <p>{props.oppScore}</p>
       <p>{props.gameStatus}</p>
+      <p>{props.gameResult}</p>
     </div>
   );
 };
